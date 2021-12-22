@@ -1,5 +1,5 @@
 ---
-- name: yum isntall httpd
+- name: 3-tier web
   hosts: _co777_Weba, _co777_Webc
   gather_facts: false
 
@@ -8,24 +8,24 @@
     yum:
       name: httpd
       state: present
-    tags: t1
+    tags: web1
 
   - name: systemctl start httpd
     systemd:
       name: httpd
       state: started
       enabled: yes
-    tags: t2
+    tags: web2
 
   - name: touch health.html
     file:
       path: /var/www/html/health.html
       state: touch
-    tags: t3
+    tags: web3
 
   - name: copy httpd.conf
-    command: "cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.bak"
-    tags: t4
+    command: 'cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.bak'
+    tags: web4
 
   - name: add config
     blockinfile:
@@ -35,12 +35,12 @@
         LoadModule proxy_module modules/mod_proxy.so
         LoadModule proxy_http_module modules/mod_proxy_http.so
         <VirtualHost *:80>
-        ProxyPass / http://co777-alb-2113002915.ap-northeast-2.elb.amazonaws.com:8080/
-        ProxyPassReverse  / http://co777-alb-2113002915.ap-northeast-2.elb.amazonaws.com:8080/
+        ProxyPass / http://<nlb>:8080/
+        ProxyPassReverse  / http://<nlb>:8080/
         </VirtualHost>
     notify:
       - httpd restart
-    tags: t5
+    tags: web5
 
   handlers:
     - name: httpd restart

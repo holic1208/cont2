@@ -7,30 +7,36 @@
     - name: apt update
       apt:
         update_cache: yes
-      tags: t1
+      tags: was1
+
+    - name: apt install mysql
+      apt:
+        name: mysql-client-core-8.0
+        state: present
+      tags: was2
 
     - name: apt default-jdk
       apt:
         name: default-jdk
         state: present
-      tags: t2
+      tags: was3
 
     - name: groupadd tomcat
       command: useradd -r -m -U -d /opt/tomcat -s /bin/false tomcat
-      tags: t3
+      tags: was4
 
     - name: get_url apache-tomcat
       get_url:
         url: https://downloads.apache.org/tomcat/tomcat-9/v9.0.56/bin/apache-tomcat-9.0.56.tar.gz
         dest: /tmp
-      tags: t4
+      tags: was5
 
     - name: unarchive apache-tomcat
       unarchive:
         src: /tmp/apache-tomcat-9.0.56.tar.gz
         dest: /opt/tomcat
         remote_src: yes
-      tags: t5
+      tags: was6
 
     - name: link apache-tomcat
       file:
@@ -38,25 +44,21 @@
         dest: /opt/tomcat/latest
         state: link
         owner: tomcat
-      tags:
-        t6
-        #shell: 'chown -RH tomcat: /opt/tomcat/latest'
+      tags: was7
+
     - name: chown tomcat
-      file:
-        path: /opt/tomcat/latest/
-        owner: tomcat
-        group: tomcat
-      tags: t7
+      shell: "chown -RH tomcat: /opt/tomcat/latest"
+      tags: was8
 
     - name: chmod + x
       shell: sh -c 'chmod +x /opt/tomcat/latest/bin/*.sh'
-      tags: t8
+      tags: was9
 
     - name: touch tomcat.service
       file:
         path: /etc/systemd/system/tomcat.service
         state: touch
-      tags: t9
+      tags: was10
 
     - name: edit tomcat.service
       blockinfile:
@@ -85,13 +87,13 @@
 
           [Install]
           WantedBy=multi-user.target
-      tags: t10
+      tags: was11
 
     - name: copy tomcat-users.xml
       copy:
         src: /home/ubuntu/tomcat-users.xml
         dest: /opt/tomcat/latest/conf/tomcat-users.xml
-      tags: t11
+      tags: was12
 
     - name: systemctl start tomcat
       systemd:
@@ -101,7 +103,7 @@
         daemon_reload: yes
       notify:
         - tomcat restart
-      tags: t12
+      tags: was13
 
   handlers:
     - name: tomcat restart
