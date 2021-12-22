@@ -1,0 +1,49 @@
+---
+- name: yum isntall httpd
+  hosts: _co777_Weba, _co777_Webc
+  gather_facts: false
+
+  tasks:
+  - name: yum install httpd
+    yum:
+      name: httpd
+      state: present
+    tags: t1
+
+  - name: systemctl start httpd
+    systemd:
+      name: httpd
+      state: started
+      enabled: yes
+    tags: t2
+
+  - name: touch health.html
+    file:
+      path: /var/www/html/health.html
+      state: touch
+    tags: t3
+
+  - name: copy httpd.conf
+    command: "cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.bak"
+    tags: t4
+
+  - name: add config
+    blockinfile:
+      path: /etc/httpd/conf/httpd.conf
+      block: |
+
+        LoadModule proxy_module modules/mod_proxy.so
+        LoadModule proxy_http_module modules/mod_proxy_http.so
+        <VirtualHost *:80>
+        ProxyPass / http://co777-alb-2113002915.ap-northeast-2.elb.amazonaws.com:8080/
+        ProxyPassReverse  / http://co777-alb-2113002915.ap-northeast-2.elb.amazonaws.com:8080/
+        </VirtualHost>
+    notify:
+      - httpd restart
+    tags: t5
+
+  handlers:
+    - name: httpd restart
+      systemd:
+        name: httpd
+        state: restarted

@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  gather_facts: false
+  
+  tasks:
+  - name: edit ansible.cfg
+    replace: 
+      path: /home/ubuntu/ansible.cfg
+      regexp: ec2-user
+      replace: ubuntu
