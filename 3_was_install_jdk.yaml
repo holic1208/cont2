@@ -1,5 +1,5 @@
 ---
-- name: apt install jdk
+- name: 3-tier was
   hosts: _co777_WASa, _co777_WASc
   gather_facts: false
 
@@ -22,7 +22,7 @@
       tags: was3
 
     - name: groupadd tomcat
-      command: useradd -r -m -U -d /opt/tomcat -s /bin/false tomcat
+      command: 'useradd -r -m -U -d /opt/tomcat -s /bin/false tomcat'
       tags: was4
 
     - name: get_url apache-tomcat
@@ -47,7 +47,7 @@
       tags: was7
 
     - name: chown tomcat
-      shell: "chown -RH tomcat: /opt/tomcat/latest"
+      shell: 'chown -RH tomcat: /opt/tomcat/latest'
       tags: was8
 
     - name: chmod + x
@@ -94,6 +94,9 @@
         src: /home/ubuntu/tomcat-users.xml
         dest: /opt/tomcat/latest/conf/tomcat-users.xml
       tags: was12
+
+    - name: git clone
+      command: 'git clone https://github.com/SteveKimbespin/petclinic_btc.git'
 
     - name: systemctl start tomcat
       systemd:
