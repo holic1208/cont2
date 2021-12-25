@@ -96,7 +96,7 @@
       tags: was12
 
     - name: git clone
-      command: 'git clone https://github.com/SteveKimbespin/petclinic_btc.git'
+      command: 'git clone https://github.com/holic1208/cont3'
 
     - name: systemctl start tomcat
       systemd:
