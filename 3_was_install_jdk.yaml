@@ -22,7 +22,7 @@
       tags: was3
 
     - name: groupadd tomcat
-      command: 'useradd -r -m -U -d /opt/tomcat -s /bin/false tomcat'
+      command: "useradd -r -m -U -d /opt/tomcat -s /bin/false tomcat"
       tags: was4
 
     - name: get_url apache-tomcat
@@ -47,7 +47,7 @@
       tags: was7
 
     - name: chown tomcat
-      shell: 'chown -RH tomcat: /opt/tomcat/latest'
+      shell: "chown -RH tomcat: /opt/tomcat/latest"
       tags: was8
 
     - name: chmod + x
@@ -95,8 +95,16 @@
         dest: /opt/tomcat/latest/conf/tomcat-users.xml
       tags: was12
 
-    - name: git clone
-      command: 'git clone https://github.com/holic1208/cont3'
+    - name: git clone petclinic.war
+      command: "git clone https://github.com/holic1208/cont3"
+      tags: was13
+
+    - name: copy petclinic.war
+      copy:
+        src: /home/ubuntu/cont3/petclinic.war
+        dest: /opt/tomcat/apache-tomcat-9.0.56/webapps/petclinic.war
+        remote_src: yes
+      tags: was14
 
     - name: systemctl start tomcat
       systemd:
@@ -106,7 +114,7 @@
         daemon_reload: yes
       notify:
         - tomcat restart
-      tags: was13
+      tags: was15
 
   handlers:
     - name: tomcat restart
